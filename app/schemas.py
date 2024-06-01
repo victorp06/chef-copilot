@@ -2,28 +2,7 @@
 
 from pydantic import BaseModel
 from typing import List, Optional
-from datetime import date
-
-# Schema for user
-class UserBase(BaseModel):
-    email: str
-    name: str
-    last_name: str
-    birthday: date
-    joined:date
-
-
-class UserCreate(UserBase):
-    password: str
-
-
-class User(UserBase):
-    id: int
-    is_active: bool
-    shopping_lists: List[ShoppingList] = []
-
-    class Config:
-        orm_mode = True
+from datetime import date, datetime
 
 # Schema for Item
 class ItemBase(BaseModel):
@@ -57,6 +36,7 @@ class ShoppingList(ShoppingListBase):
 class RecipeBase(BaseModel):
     name: str
     ingredients: List[Item]
+    steps: str
 
 class RecipeCreate(RecipeBase):
     pass
@@ -77,6 +57,26 @@ class MealPlanCreate(MealPlanBase):
 
 class MealPlan(MealPlanBase):
     id: int
+
+    class Config:
+        orm_mode = True
+
+# Schema for user
+class UserBase(BaseModel):
+    email: str
+    name: str
+    last_name: str
+    birthday: date
+    
+
+class UserCreate(UserBase):
+    hashed_password: str
+    joined: datetime = datetime.utcnow()
+
+class User(UserBase):
+    id: int
+    is_active: bool = True
+    shopping_lists: List[ShoppingList] = []
 
     class Config:
         orm_mode = True

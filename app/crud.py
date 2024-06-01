@@ -16,15 +16,22 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 def create_user(db: Session, user: schemas.UserCreate):
-    fake_hashed_password = user.password + "notreallyhashed"
-    db_user = models.User(email=user.email, hashed_password=fake_hashed_password)
+    fake_hashed_password = user.hashed_password + "notreallyhashed"
+    db_user = models.User(**user.model_dump())
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
+def delete_user(db: Session, user_id: int):
+    db_item = db.query(models.User).filter(models.User.id == user_id).first()
+    if db_item:
+        db.delete(db_item)
+        db.commit()
+    return db_item
+
 def create_user_shopping_list(db: Session, shopping_list: schemas.ShoppingListCreate, user_id: int):
-    db_shopping_list = models.ShoppingList(**shopping_list.dict(), user_id=user_id)
+    db_shopping_list = models.ShoppingList(**shopping_list.model_dump(), user_id=user_id)
     db.add(db_shopping_list)
     db.commit()
     db.refresh(db_shopping_list)

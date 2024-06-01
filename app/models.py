@@ -1,13 +1,40 @@
 # app/models.py
 
-from sqlalchemy import Boolean, Column, Integer, String, Date, Table, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, String, Date, DateTime, Table, ForeignKey
 from sqlalchemy.orm import relationship
+from datetime import datetime
+
 from .database import Base
 
+# Define the association table for the many-to-many relationship between User and ShoppingList
+user_shopping_list_association = Table(
+    'user_shopping_list_association',
+    Base.metadata,
+    Column('user_id', ForeignKey('users.id'), primary_key=True),
+    Column('shopping_list_id', ForeignKey('shopping_lists.id'), primary_key=True)
+)
+
+shopping_list_item = Table(
+    'shopping_list_item',
+    Base.metadata,
+    Column('shopping_list_id', Integer, ForeignKey('shopping_lists.id')),
+    Column('item_id', Integer, ForeignKey('items.id'))
+)
+
+# Define association table for Recipe-Ingredient relationship
 recipe_ingredient = Table(
-    'recipe_ingredient', Base.metadata,
+    'recipe_ingredient',
+    Base.metadata,
     Column('recipe_id', Integer, ForeignKey('recipes.id')),
-    Column('ingredient_id', Integer, ForeignKey('items.id'))
+    Column('item_id', Integer, ForeignKey('items.id'))
+)
+
+# Define association table for MealPlan-Recipe relationship
+meal_plan_recipe = Table(
+    'meal_plan_recipe',
+    Base.metadata,
+    Column('meal_plan_id', Integer, ForeignKey('meal_plans.id')),
+    Column('recipe_id', Integer, ForeignKey('recipes.id'))
 )
 
 class User(Base):
@@ -18,7 +45,7 @@ class User(Base):
     name = Column(String)
     last_name = Column(String)
     birthday = Column(Date)
-    joined = Column(Date)
+    joined = Column(DateTime, default=datetime.utcnow())
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
     shopping_lists = relationship("ShoppingList", secondary="user_shopping_list_association")
@@ -41,6 +68,7 @@ class Recipe(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     ingredients = relationship("Item", secondary=recipe_ingredient)
+    steps = Column(String)
 
 class MealPlan(Base):
     __tablename__ = 'meal_plans'

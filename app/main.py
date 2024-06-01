@@ -22,10 +22,13 @@ def get_db():
 
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db, email=user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
+    try:
+        db_user = crud.get_user_by_email(db, email=user.email)
+        if db_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        return crud.create_user(db=db, user=user)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=e)
 
 
 @app.get("/users/", response_model=List[schemas.User])
@@ -46,6 +49,14 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
 def create_shopping_list_for_user(
     user_id: int, shopping_list: schemas.ShoppingListCreate, db: Session = Depends(get_db)):
     return crud.create_user_shopping_list(db=db, item=item, user_id=user_id)
+
+# Delete an user
+@app.delete("/users/{item_id}", response_model=schemas.User)
+def delete_item(user_id: int, db: Session = Depends(get_db)):
+    db_item = crud.delete_user(db, user_id=user_id)
+    if db_item is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_item
 
 # Create a new item
 @app.post("/items/", response_model=schemas.Item)
