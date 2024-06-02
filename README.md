@@ -25,24 +25,33 @@ To get started with Chef-copilot, follow the instructions below to set up the pr
 
 ```
 git clone https://github.com/yourusername/chef-copilot.git
-cd chef-copilot```
+cd chef-copilot
+```
 
 ### Create a Virtual Environment
+
 ```
 python -m venv venv
 source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+```
 
 ### Install Dependencies
+
 ```
-pip install -r requirements.txt```
+pip install -r requirements.txt
+```
 
 ### Set Up the Database
+
 - Create a new database in PostgreSQL (or your preferred database).
 - Update the database configuration in app/database.py:
 
-```SQLALCHEMY_DATABASE_URL = "postgresql://username:password@localhost/dbname"```
+```
+SQLALCHEMY_DATABASE_URL = "postgresql://username:password@localhost/dbname"
+```
 
 ### Create the database tables:
+
 ```alembic upgrade head```
 
 ### Running the Application
@@ -50,40 +59,45 @@ pip install -r requirements.txt```
 To run the application, execute the following command:
 
 ```./run.sh```
-The application will be available at http://localhost:8000.
+**Note:** The application will be available at http://localhost:8000.
 
 ## API Endpoints
 
 ### User Management
+
 - Create User: POST /users/
 - Get Users: GET /users/
 - Get User by ID: GET /users/{user_id}
 
 ### Shopping Lists
+
 - Create Shopping List: POST /shopping-lists/
 - Get Shopping Lists: GET /shopping-lists/
-
-### Add Item to Shopping List: POST /shopping-lists/{shopping_list_id}/items
+- Add Item to Shopping List: POST /shopping-lists/{shopping_list_id}/items
 - Remove Item from Shopping List: DELETE /shopping-lists/{shopping_list_id}/items/{item_id}
-- Items
+
+### Items
+
 - Create Item: POST /items/
 - Get Items: GET /items/
 - Update Item: PUT /items/{item_id}
 - Delete Item: DELETE /items/{item_id}
 
 ### Recipes
+
 - Create Recipe: POST /recipes/
 - Get Recipes: GET /recipes/
 - Add Ingredient to Recipe: POST /recipes/{recipe_id}/ingredients
 - Remove Ingredient from Recipe: DELETE /recipes/{recipe_id}/ingredients/{item_id}
 
 ### Meal Plans
+
 - Create Meal Plan: POST /meal-plans/
 - Get Meal Plans: GET /meal-plans/
 - Add Recipe to Meal Plan: POST /meal-plans/{meal_plan_id}/recipes
 - Remove Recipe from Meal Plan: DELETE /meal-plans/{meal_plan_id}/recipes/{recipe_id}
 
-##Project Structure
+## Project Structure
 
 chef-copilot/
 │
